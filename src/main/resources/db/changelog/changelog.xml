@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create_car_rent_schema" author="tonya">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS car_rent;
+        </sql>
+    </changeSet>
+
+    <changeSet id="create_rental_center_id_seq" author="tonya">
+        <createSequence sequenceName="rental_center_id_seq" incrementBy="1" schemaName="car_rent"/>
+    </changeSet>
+
+    <changeSet id="create_rental_center_table" author="tonya">
+        <createTable tableName="rental_center" schemaName="car_rent">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="address" type="varchar(300)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create_car_id_sequence" author="tonya">
+        <createSequence sequenceName="car_id_seq" schemaName="car_rent" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="create_car_table" author="tonya">
+        <createTable tableName="car" schemaName="car_rent">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="rental_center_id" type="bigint"/>
+            <column name="brand" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="model" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="license_plate" type="varchar(20)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="car" baseColumnNames="rental_center_id"
+                                 constraintName="car_rental_center_fk" referencedTableName="rental_center"
+                                 referencedColumnNames="id" baseTableSchemaName="car_rent"
+                                 referencedTableSchemaName="car_rent"/>
+    </changeSet>
+</databaseChangeLog>
